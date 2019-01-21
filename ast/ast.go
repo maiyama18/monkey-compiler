@@ -2,7 +2,7 @@ package ast
 
 import (
 	"bytes"
-	"monkey/token"
+	"github.com/muiscript/monkey-compiler/token"
 	"strings"
 )
 

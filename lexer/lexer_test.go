@@ -1,9 +1,8 @@
 package lexer
 
 import (
+	"github.com/muiscript/monkey-compiler/token"
 	"testing"
-
-	"monkey/token"
 )
 
 func TestNextToken(t *testing.T) {

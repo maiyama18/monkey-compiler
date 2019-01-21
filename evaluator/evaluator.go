@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"monkey/ast"
-	"monkey/object"
+	"github.com/muiscript/monkey-compiler/ast"
+	"github.com/muiscript/monkey-compiler/object"
 )
 
 var (

@@ -1,6 +1,6 @@
 package lexer
 
-import "monkey/token"
+import "github.com/muiscript/monkey-compiler/token"
 
 type Lexer struct {
 	input        string

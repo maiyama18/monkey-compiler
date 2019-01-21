@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"monkey/repl"
+	"github.com/muiscript/monkey-compiler/repl"
 	"os"
 	"os/user"
 )

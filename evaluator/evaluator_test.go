@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"github.com/muiscript/monkey-compiler/lexer"
+	"github.com/muiscript/monkey-compiler/object"
+	"github.com/muiscript/monkey-compiler/parser"
 	"testing"
 )
 

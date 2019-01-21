@@ -3,8 +3,8 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"github.com/muiscript/monkey-compiler/ast"
 	"hash/fnv"
-	"monkey/ast"
 	"strings"
 )
 
