@@ -16,6 +16,13 @@ type Compiler struct {
 	constants    []object.Object
 }
 
+func New() *Compiler {
+	return &Compiler{
+		instructions: code.Instructions{},
+		constants: []object.Object{},
+	}
+}
+
 func (c *Compiler) Compile(node ast.Node) error {
 	return nil
 }
