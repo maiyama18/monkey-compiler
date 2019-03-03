@@ -3,21 +3,23 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"io"
+
 	"github.com/muiscript/monkey-compiler/evaluator"
 	"github.com/muiscript/monkey-compiler/lexer"
 	"github.com/muiscript/monkey-compiler/object"
 	"github.com/muiscript/monkey-compiler/parser"
-	"io"
 )
 
-const PROMPT = ">> "
+const prompt = ">> "
 
+// Start starts REPL of monkey
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 
 	for {
-		fmt.Printf(PROMPT)
+		fmt.Printf(prompt)
 		scanned := scanner.Scan()
 		if !scanned {
 			return
@@ -41,21 +43,7 @@ func Start(in io.Reader, out io.Writer) {
 	}
 }
 
-const MONKEY_FACE = `            __,__
-   .--.  .-"     "-.  .--.
-  / .. \/  .-. .-.  \/ .. \
- | |  '|  /   Y   \  |'  | |
- | \   \  \ 0 | 0 /  /   / |
-  \ '- ,\.-"""""""-./, -' /
-   ''-' /_   ^ ^   _\ '-''
-       |  \._   _./  |
-       \   \ '~' /   /
-        '._ '-=-' _.'
-           '-----'
-`
-
 func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, MONKEY_FACE)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
 	io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
