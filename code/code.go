@@ -2,28 +2,32 @@ package code
 
 import "fmt"
 
+// Instructions is byte array representing code
 type Instructions []byte
 
+// Opcode is a byte corresponding a instruction
 type Opcode byte
 
+const (
+	// OpConstant register literal in monkey code
+	OpConstant Opcode = iota
+)
+
+// Definition defines Opcode
 type Definition struct {
 	Name          string
 	OperandWidths []int
 }
 
-const (
-	OpConstant Opcode = iota
-)
-
-var definitions = map[Opcode]*Definition {
-	OpConstant: &Definition{Name: "OpConstant", OperandWidths: []int{2}},
+var definitions = map[Opcode]*Definition{
+	OpConstant: {"OpConstant", []int{2}},
 }
 
-func LookUp(opcode Opcode) (*Definition, error) {
-	def, ok := definitions[opcode]
+// Lookup returns definition of passed opcode
+func Lookup(op byte) (*Definition, error) {
+	def, ok := definitions[Opcode(op)]
 	if !ok {
-		return nil, fmt.Errorf("opcode %d undefined", opcode)
+		return nil, fmt.Errorf("Opcode %d is not defined", op)
 	}
-
 	return def, nil
 }
