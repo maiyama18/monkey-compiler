@@ -1,41 +1,44 @@
 package code
 
 import (
-	"bytes"
 	"encoding/binary"
 	"fmt"
 )
 
+// Instructions is byte array representing code
 type Instructions []byte
 
-
+// Opcode is a byte corresponding a instruction
 type Opcode byte
 
+const (
+	// OpConstant register literal in monkey code
+	OpConstant Opcode = iota
+)
+
+// Definition defines Opcode
 type Definition struct {
 	Name          string
 	OperandWidths []int
 }
 
-const (
-	OpConstant Opcode = iota
-)
-
-var definitions = map[Opcode]*Definition {
-	OpConstant: &Definition{Name: "OpConstant", OperandWidths: []int{2}},
+var definitions = map[Opcode]*Definition{
+	OpConstant: {"OpConstant", []int{2}},
 }
 
-func LookUp(opcode Opcode) (*Definition, error) {
-	def, ok := definitions[opcode]
+// Lookup returns definition of passed opcode
+func Lookup(opcode byte) (*Definition, error) {
+	def, ok := definitions[Opcode(opcode)]
 	if !ok {
-		return nil, fmt.Errorf("opcode %d undefined", opcode)
+		return nil, fmt.Errorf("Opcode %d is not defined", opcode)
 	}
-
 	return def, nil
 }
 
+// Make makes instruction byte array from opcode and operands
 func Make(opcode Opcode, operands ...int) []byte {
-	def, err := LookUp(opcode)
-	if err != nil {
+	def, ok := definitions[opcode]
+	if !ok {
 		return []byte{}
 	}
 
@@ -59,51 +62,3 @@ func Make(opcode Opcode, operands ...int) []byte {
 
 	return instruction
 }
-
-func (ins Instructions) String() string {
-	out := bytes.Buffer{}
-	offset := 0
-
-	for offset < len(ins) {
-		opcodeOffset := offset
-		opcode := Opcode(ins[offset])
-		offset++
-
-		def, err := LookUp(opcode)
-		if err != nil {
-			return ""
-		}
-
-		operands, read := ReadOperands(def, ins[offset:])
-		offset += read
-
-		fmt.Fprintf(&out, "%04d %s", opcodeOffset, def.Name)
-		for _, operand := range operands {
-			fmt.Fprintf(&out, " %d", operand)
-		}
-		fmt.Fprintf(&out, "\n")
-	}
-
-	return out.String()
-}
-
-func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
-	operands := make([]int, len(def.OperandWidths))
-	offset := 0
-
-	for i, width := range def.OperandWidths {
-		switch width {
-		case 2:
-			operands[i] = int(ReadUint16(ins[offset:]))
-		}
-
-		offset += width
-	}
-
-	return operands, offset
-}
-
-func ReadUint16(b []byte) uint16 {
-	return binary.BigEndian.Uint16(b)
-}
-
