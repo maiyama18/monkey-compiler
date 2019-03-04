@@ -1,120 +1,85 @@
 package compiler
 
 import (
-	"fmt"
-	"github.com/muiscript/monkey-compiler/ast"
-	"github.com/muiscript/monkey-compiler/code"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
 	"github.com/muiscript/monkey-compiler/lexer"
 	"github.com/muiscript/monkey-compiler/object"
 	"github.com/muiscript/monkey-compiler/parser"
-	"testing"
+
+	"github.com/muiscript/monkey-compiler/ast"
+	"github.com/muiscript/monkey-compiler/code"
 )
 
 type compilerTestCase struct {
 	desc                 string
 	input                string
 	expectedConstants    []interface{}
-	expectedInstructions code.Instructions
+	expectedInstructions []code.Instructions
 }
 
 func TestIntegerArithmetic(t *testing.T) {
-	tests := []compilerTestCase{
+	testCases := []compilerTestCase{
 		{
-			desc:              "Add",
+			desc:              "1+2",
 			input:             "1 + 2",
 			expectedConstants: []interface{}{1, 2},
-			expectedInstructions: concatInstructions([]code.Instructions{
+			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpConstant, 1),
-			}),
+			},
 		},
 	}
 
-	runCompilerTests(t, tests)
+	runCompilerTests(t, testCases)
 }
 
-func runCompilerTests(t *testing.T, tests []compilerTestCase) {
+func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 	t.Helper()
 
-	for _, tt := range tests {
-		t.Run(tt.desc, func(t *testing.T) {
-			program := parse(tt.input)
+	for _, tc := range testCases {
+		program := parse(tc.input)
 
-			compiler := New()
-			if err := compiler.Compile(program); err != nil {
-				t.Fatalf("compiler error: %s\n", err)
-			}
+		compiler := New()
+		err := compiler.Compile(program)
+		assert.Nil(t, err, "compile should return no error")
 
-			bytecode := compiler.ByteCode()
+		byteCode := compiler.ByteCode()
 
-			if err := testInstructions(tt.expectedInstructions, bytecode.Instructions); err != nil {
-				t.Fatalf("testInstructions failed: %s", err)
-			}
+		expectedInstructions := concatInstructions(tc.expectedInstructions)
+		assert.Equal(t, expectedInstructions, byteCode.Instructions)
 
-			if err := testConstants(tt.expectedConstants, bytecode.Constants); err != nil {
-				t.Fatalf("testConstants failed: %s", err)
-			}
-		})
-	}
-}
-
-func testInstructions(expected, actual code.Instructions) error {
-	if len(actual) != len(expected)	{
-		return fmt.Errorf("wrong instructions length. \nexpected=%q\nactual=%q", expected, actual)
-	}
-
-	for i, e := range expected {
-		if actual[i] != e {
-			return fmt.Errorf("wrong instruction at %d.\nexpected=%q\nactual=%q", i, e, actual[i])
-		}
-	}
-
-	return nil
-}
-
-func testConstants(expected []interface{}, actual []object.Object) error {
-	if len(actual) != len(expected)	{
-		return fmt.Errorf("wrong instructions length. \nexpected=%d\nactual=%d", len(expected), len(actual))
-	}
-
-	for i, expectedConst := range expected {
-		switch expectedConst := expectedConst.(type) {
-		case int:
-			if err := testIntegerObject(int64(expectedConst), actual[i]); err != nil {
-				return fmt.Errorf("constant %d - testIntegerObject failed: %s", i, err)
+		assert.Equal(t, len(tc.expectedConstants), len(byteCode.Constants), "the length of constants should be same")
+		for i, c := range tc.expectedConstants {
+			switch c := c.(type) {
+			case int:
+				testIntegerObject(t, c, byteCode.Constants[i])
 			}
 		}
 	}
-
-	return nil
-}
-
-func testIntegerObject(expected int64, actual object.Object) error {
-	result, ok := actual.(*object.Integer)
-	if !ok {
-		return fmt.Errorf("object is not Integer. actual=%T (%+v)", actual, actual)
-	}
-
-	if result.Value != expected {
-		return fmt.Errorf("object has wrong value. expected=%d, got=%d", expected, result.Value)
-	}
-
-	return nil
 }
 
 func parse(input string) *ast.Program {
 	l := lexer.New(input)
 	p := parser.New(l)
-
 	return p.ParseProgram()
 }
 
 func concatInstructions(instructions []code.Instructions) code.Instructions {
 	out := code.Instructions{}
-
 	for _, ins := range instructions {
 		out = append(out, ins...)
 	}
-
 	return out
+}
+
+func testIntegerObject(t *testing.T, expected int, actual object.Object) {
+	t.Helper()
+
+	actualInteger, ok := actual.(*object.Integer)
+	assert.True(t, ok, "should be converted to Integer")
+
+	assert.Equal(t, expected, actualInteger.Value, "should be equal")
 }
