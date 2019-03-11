@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test(t *testing.T) {
+func TestMake(t *testing.T) {
 	testCases := []struct {
 		desc     string
 		opcode   Opcode

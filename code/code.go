@@ -30,7 +30,7 @@ var definitions = map[Opcode]*Definition{
 func Lookup(opcode byte) (*Definition, error) {
 	def, ok := definitions[Opcode(opcode)]
 	if !ok {
-		return nil, fmt.Errorf("Opcode %d is not defined", opcode)
+		return nil, fmt.Errorf("opcode %d is not defined", opcode)
 	}
 	return def, nil
 }
