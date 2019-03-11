@@ -1,12 +1,37 @@
 package code
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 )
 
 // Instructions is byte array representing code
 type Instructions []byte
+
+func (ins Instructions) String() string {
+	var out bytes.Buffer
+	offset := 0
+
+	for offset < len(ins) {
+		def, err := Lookup(ins[offset])
+		if err != nil {
+			_, _ = fmt.Fprintf(&out, "ERROR: %s\n", err)
+			continue
+		}
+
+		operands, read := ReadOperands(def, ins[offset+1:])
+
+		fmt.Fprintf(&out, "%04d %s")
+
+		offset += 1 + read
+	}
+}
+
+func fmtInstruction(def *Definition, operands []int) string {
+	if
+}
+
 
 // Opcode is a byte corresponding a instruction
 type Opcode byte
@@ -61,4 +86,24 @@ func Make(opcode Opcode, operands ...int) []byte {
 	}
 
 	return instruction
+}
+
+func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
+	operands := make([]int, len(def.OperandWidths))
+	offset := 0
+
+	for i, width := range def.OperandWidths {
+		switch width {
+		case 2:
+			operands[i] = int(ReadUint16(ins[offset:]))
+		}
+
+		offset += width
+	}
+
+	return operands, offset
+}
+
+func ReadUint16(ins Instructions) uint16 {
+	return binary.BigEndian.Uint16(ins)
 }

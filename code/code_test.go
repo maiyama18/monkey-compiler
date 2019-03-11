@@ -29,6 +29,22 @@ func TestMake(t *testing.T) {
 	}
 }
 
+func TestInstructionsString(t *testing.T) {
+	instructions := []Instructions{
+		Make(OpConstant, 1),
+		Make(OpConstant, 2),
+		Make(OpConstant, 65535),
+	}
+
+	expected := `0000 OpConstant 1
+0003 OpConstant 2
+0006 OpConstant 65535`
+
+	concatted := concatInstructions(instructions)
+
+	assert.Equal(t, expected, concatted.String())
+}
+
 func concatInstructions(instructions []Instructions) Instructions {
 	out := Instructions{}
 
@@ -37,4 +53,29 @@ func concatInstructions(instructions []Instructions) Instructions {
 	}
 
 	return out
+}
+
+func TestReadOperands(t *testing.T) {
+	tests := []struct {
+		name      string
+		opcode    Opcode
+		operands  []int
+		bytesRead int
+	}{
+		{
+			"opconstant", OpConstant, []int{65535}, 2,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			instruction := Make(test.opcode, test.operands...)
+
+			def, err := Lookup(byte(test.opcode))
+			assert.Nil(t, err)
+
+			operandsRead, n := ReadOperands(def, instruction[1:])
+			assert.Equal(t, test.bytesRead, n)
+			assert.Equal(t, test.operands, operandsRead)
+		})
+	}
 }
