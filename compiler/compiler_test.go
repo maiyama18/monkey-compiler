@@ -78,5 +78,5 @@ func testIntegerObject(t *testing.T, expected int, actual object.Object) {
 	actualInteger, ok := actual.(*object.Integer)
 	assert.True(t, ok, "should be converted to Integer")
 
-	assert.Equal(t, expected, actualInteger.Value, "should be equal")
+	assert.Equal(t, expected, int(actualInteger.Value), "should be equal")
 }
