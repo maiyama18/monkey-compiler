@@ -41,7 +41,7 @@ func runVmTests(t *testing.T, testCases []vmTestCase) {
 			t.Fatalf("vm error: %v", err)
 		}
 
-		assert.Equal(t, tc.expected, vm.StackTop())
+		testObject(t, tc.expected, vm.StackTop())
 	}
 }
 
