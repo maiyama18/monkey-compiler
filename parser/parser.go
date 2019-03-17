@@ -2,22 +2,22 @@ package parser
 
 import (
 	"fmt"
-	"github.com/muiscript/monkey-compiler/ast"
-	"github.com/muiscript/monkey-compiler/lexer"
-	"github.com/muiscript/monkey-compiler/token"
+	"monkey-compiler/ast"
+	"monkey-compiler/lexer"
+	"monkey-compiler/token"
 	"strconv"
 )
 
 const (
 	_ int = iota
 	LOWEST
-	EQUALS       // ==
-	LESSGREATER  // > or <
-	SUM          // +
-	PRODUCT      // *
-	PREFIX       // -X or !X
-	CALL         // myFunction(X)
-	INDEX        // array[index]
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	CALL        // myFunction(X)
+	INDEX       // array[index]
 )
 
 var precedences = map[token.TokenType]int{
@@ -35,7 +35,7 @@ var precedences = map[token.TokenType]int{
 
 type (
 	prefixParseFn func() ast.Expression
-	infixParseFn func(ast.Expression) ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
 )
 
 type Parser struct {

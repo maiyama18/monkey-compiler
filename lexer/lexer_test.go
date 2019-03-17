@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/muiscript/monkey-compiler/token"
+	"monkey-compiler/token"
 	"testing"
 )
 

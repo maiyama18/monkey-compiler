@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/muiscript/monkey-compiler/evaluator"
-	"github.com/muiscript/monkey-compiler/lexer"
-	"github.com/muiscript/monkey-compiler/object"
-	"github.com/muiscript/monkey-compiler/parser"
+	"monkey-compiler/evaluator"
+	"monkey-compiler/lexer"
+	"monkey-compiler/object"
+	"monkey-compiler/parser"
 )
 
 const prompt = ">> "
@@ -37,16 +37,16 @@ func Start(in io.Reader, out io.Writer) {
 
 		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+			_, _ = io.WriteString(out, evaluated.Inspect())
+			_, _ = io.WriteString(out, "\n")
 		}
 	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors:\n")
+	_, _ = io.WriteString(out, "Woops! We ran into some monkey business here!\n")
+	_, _ = io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
+		_, _ = io.WriteString(out, "\t"+msg+"\n")
 	}
 }

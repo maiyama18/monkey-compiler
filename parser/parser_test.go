@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"github.com/muiscript/monkey-compiler/ast"
-	"github.com/muiscript/monkey-compiler/lexer"
+	"monkey-compiler/ast"
+	"monkey-compiler/lexer"
 	"testing"
 )
 

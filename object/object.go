@@ -3,8 +3,8 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"github.com/muiscript/monkey-compiler/ast"
 	"hash/fnv"
+	"monkey-compiler/ast"
 	"strings"
 )
 
@@ -100,7 +100,7 @@ func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
 func (f *Function) Inspect() string {
 	var out bytes.Buffer
 
-	params := []string{}
+	params := make([]string, 0)
 	for _, p := range f.Parameters {
 		params = append(params, p.String())
 	}
@@ -123,7 +123,7 @@ func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
 func (s *String) HashKey() HashKey {
 	h := fnv.New64a()
-	h.Write([]byte(s.Value))
+	_, _ = h.Write([]byte(s.Value))
 
 	return HashKey{Type: s.Type(), Value: h.Sum64()}
 }
@@ -143,7 +143,7 @@ func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
 func (ao *Array) Inspect() string {
 	var out bytes.Buffer
 
-	elements := []string{}
+	elements := make([]string, 0)
 	for _, e := range ao.Elements {
 		elements = append(elements, e.Inspect())
 	}
@@ -168,7 +168,7 @@ func (h *Hash) Type() ObjectType { return HASH_OBJ }
 func (h *Hash) Inspect() string {
 	var out bytes.Buffer
 
-	pairs := []string{}
+	pairs := make([]string, 0)
 	for _, pair := range h.Pairs {
 		pairs = append(pairs, fmt.Sprintf("%s: %s",
 			pair.Key.Inspect(), pair.Value.Inspect()))

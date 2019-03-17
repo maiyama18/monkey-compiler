@@ -1,12 +1,12 @@
 package vm
 
 import (
-	"github.com/muiscript/monkey-compiler/ast"
-	"github.com/muiscript/monkey-compiler/compiler"
-	"github.com/muiscript/monkey-compiler/lexer"
-	"github.com/muiscript/monkey-compiler/object"
-	"github.com/muiscript/monkey-compiler/parser"
 	"github.com/stretchr/testify/assert"
+	"monkey-compiler/ast"
+	"monkey-compiler/compiler"
+	"monkey-compiler/lexer"
+	"monkey-compiler/object"
+	"monkey-compiler/parser"
 	"testing"
 )
 

@@ -2,9 +2,9 @@ package vm
 
 import (
 	"errors"
-	"github.com/muiscript/monkey-compiler/code"
-	"github.com/muiscript/monkey-compiler/compiler"
-	"github.com/muiscript/monkey-compiler/object"
+	"monkey-compiler/code"
+	"monkey-compiler/compiler"
+	"monkey-compiler/object"
 )
 
 const StackSize = 2048
