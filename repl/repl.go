@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"monkey-compiler/compiler"
+	"monkey-compiler/vm"
 
-	"monkey-compiler/evaluator"
 	"monkey-compiler/lexer"
-	"monkey-compiler/object"
 	"monkey-compiler/parser"
 )
 
@@ -16,7 +16,6 @@ const prompt = ">> "
 // Start starts REPL of monkey
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(prompt)
@@ -35,18 +34,26 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil {
-			_, _ = io.WriteString(out, evaluated.Inspect())
-			_, _ = io.WriteString(out, "\n")
+		comp := compiler.New()
+		if err := comp.Compile(program); err != nil {
+			io.WriteString(out, fmt.Sprintf("error during compilation: %v", err))
 		}
+
+		machine := vm.New(comp.ByteCode())
+		if err := machine.Run(); err != nil {
+			io.WriteString(out, fmt.Sprintf("error during execution: %v", err))
+		}
+
+		result := machine.StackTop()
+		io.WriteString(out, result.Inspect())
+		io.WriteString(out, "\n")
 	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
-	_, _ = io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	_, _ = io.WriteString(out, " parser errors:\n")
+	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
+	io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
-		_, _ = io.WriteString(out, "\t"+msg+"\n")
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
