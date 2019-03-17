@@ -52,7 +52,7 @@ func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 		for i, c := range tc.expectedConstants {
 			switch c := c.(type) {
 			case int:
-				testIntegerObject(t, c, byteCode.Constants[i])
+				testIntegerObject(t, int64(c), byteCode.Constants[i])
 			}
 		}
 	}
@@ -72,11 +72,11 @@ func concatInstructions(instructions []code.Instructions) code.Instructions {
 	return out
 }
 
-func testIntegerObject(t *testing.T, expected int, actual object.Object) {
+func testIntegerObject(t *testing.T, expected int64, actual object.Object) {
 	t.Helper()
 
 	actualInteger, ok := actual.(*object.Integer)
 	assert.True(t, ok, "should be converted to Integer")
 
-	assert.Equal(t, expected, int(actualInteger.Value), "should be equal")
+	assert.Equal(t, expected, actualInteger.Value, "should be equal")
 }
