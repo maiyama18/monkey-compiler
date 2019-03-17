@@ -37,6 +37,8 @@ func fmtInstruction(def *Definition, operands []int) string {
 	}
 
 	switch operandCount {
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}
@@ -50,6 +52,7 @@ type Opcode byte
 const (
 	// OpConstant register literal in monkey code
 	OpConstant Opcode = iota
+	OpAdd
 )
 
 // Definition defines Opcode
@@ -60,6 +63,7 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
+	OpAdd:      {"OpAdd", []int{}},
 }
 
 // Lookup returns definition of passed opcode
