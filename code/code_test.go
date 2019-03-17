@@ -38,11 +38,12 @@ func TestInstructionsString(t *testing.T) {
 
 	expected := `0000 OpConstant 1
 0003 OpConstant 2
-0006 OpConstant 65535`
+0006 OpConstant 65535
+`
 
-	concatted := concatInstructions(instructions)
+	concatenated := concatInstructions(instructions)
 
-	assert.Equal(t, expected, concatted.String())
+	assert.Equal(t, expected, concatenated.String())
 }
 
 func concatInstructions(instructions []Instructions) Instructions {

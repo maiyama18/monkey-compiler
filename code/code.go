@@ -22,16 +22,27 @@ func (ins Instructions) String() string {
 
 		operands, read := ReadOperands(def, ins[offset+1:])
 
-		fmt.Fprintf(&out, "%04d %s")
+		_, _ = fmt.Fprintf(&out, "%04d %s\n", offset, fmtInstruction(def, operands))
 
 		offset += 1 + read
 	}
+
+	return out.String()
 }
 
 func fmtInstruction(def *Definition, operands []int) string {
-	if
-}
+	operandCount := len(def.OperandWidths)
+	if len(operands) != operandCount {
+		return fmt.Sprintf("ERROR: number of operands wrong: want=%d, got=%d", operandCount, len(operands))
+	}
 
+	switch operandCount {
+	case 1:
+		return fmt.Sprintf("%s %d", def.Name, operands[0])
+	}
+
+	return fmt.Sprintf("ERROR: unexpected number of operands for %s: %d", def.Name, operandCount)
+}
 
 // Opcode is a byte corresponding a instruction
 type Opcode byte
