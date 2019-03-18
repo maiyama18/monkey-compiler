@@ -53,6 +53,7 @@ const (
 	// OpConstant register literal in monkey code
 	OpConstant Opcode = iota
 	OpAdd
+	OpPop
 )
 
 // Definition defines Opcode
@@ -64,6 +65,7 @@ type Definition struct {
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
 	OpAdd:      {"OpAdd", []int{}},
+	OpPop:      {"OpPop", []int{}},
 }
 
 // Lookup returns definition of passed opcode

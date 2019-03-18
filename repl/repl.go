@@ -44,7 +44,7 @@ func Start(in io.Reader, out io.Writer) {
 			io.WriteString(out, fmt.Sprintf("error during execution: %v", err))
 		}
 
-		result := machine.StackTop()
+		result := machine.LastPopped()
 		io.WriteString(out, result.Inspect())
 		io.WriteString(out, "\n")
 	}
