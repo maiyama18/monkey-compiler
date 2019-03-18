@@ -52,8 +52,11 @@ type Opcode byte
 const (
 	// OpConstant register literal in monkey code
 	OpConstant Opcode = iota
-	OpAdd
 	OpPop
+	OpAdd
+	OpSub
+	OpMul
+	OpDiv
 )
 
 // Definition defines Opcode
@@ -64,8 +67,11 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
-	OpAdd:      {"OpAdd", []int{}},
 	OpPop:      {"OpPop", []int{}},
+	OpAdd:      {"OpAdd", []int{}},
+	OpSub:      {"OpSub", []int{}},
+	OpMul:      {"OpMul", []int{}},
+	OpDiv:      {"OpDiv", []int{}},
 }
 
 // Lookup returns definition of passed opcode
