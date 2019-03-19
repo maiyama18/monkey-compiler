@@ -31,6 +31,15 @@ func TestIntegerArithmetic(t *testing.T) {
 	runVmTests(t, testCases)
 }
 
+func TestBooleanExpression(t *testing.T) {
+	testCases := []vmTestCase{
+		{"true;", true},
+		{"false;", false},
+	}
+
+	runVmTests(t, testCases)
+}
+
 func runVmTests(t *testing.T, testCases []vmTestCase) {
 	t.Helper()
 
@@ -64,6 +73,8 @@ func testObject(t *testing.T, expected interface{}, actual object.Object) {
 	switch expected := expected.(type) {
 	case int:
 		testIntegerObject(t, int64(expected), actual)
+	case bool:
+		testBooleanObject(t, expected, actual)
 	}
 }
 
@@ -74,4 +85,13 @@ func testIntegerObject(t *testing.T, expected int64, actual object.Object) {
 	assert.True(t, ok, "should be converted to Integer")
 
 	assert.Equal(t, expected, actualInteger.Value, "should be equal")
+}
+
+func testBooleanObject(t *testing.T, expected bool, actual object.Object) {
+	t.Helper()
+
+	actualBoolean, ok := actual.(*object.Boolean)
+	assert.True(t, ok, "should be converted to Boolean")
+
+	assert.Equal(t, expected, actualBoolean.Value, "should be equal")
 }
