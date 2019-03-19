@@ -6,6 +6,21 @@ import (
 	"fmt"
 )
 
+// Opcode is a byte corresponding a instruction
+type Opcode byte
+
+const (
+	// OpConstant register literal in monkey code
+	OpConstant Opcode = iota
+	OpPop
+	OpAdd
+	OpSub
+	OpMul
+	OpDiv
+	OpTrue
+	OpFalse
+)
+
 // Instructions is byte array representing code
 type Instructions []byte
 
@@ -46,19 +61,6 @@ func fmtInstruction(def *Definition, operands []int) string {
 	return fmt.Sprintf("ERROR: unexpected number of operands for %s: %d", def.Name, operandCount)
 }
 
-// Opcode is a byte corresponding a instruction
-type Opcode byte
-
-const (
-	// OpConstant register literal in monkey code
-	OpConstant Opcode = iota
-	OpPop
-	OpAdd
-	OpSub
-	OpMul
-	OpDiv
-)
-
 // Definition defines Opcode
 type Definition struct {
 	Name          string
@@ -72,6 +74,8 @@ var definitions = map[Opcode]*Definition{
 	OpSub:      {"OpSub", []int{}},
 	OpMul:      {"OpMul", []int{}},
 	OpDiv:      {"OpDiv", []int{}},
+	OpTrue:     {"OpTrue", []int{}},
+	OpFalse:    {"OpFalse", []int{}},
 }
 
 // Lookup returns definition of passed opcode
