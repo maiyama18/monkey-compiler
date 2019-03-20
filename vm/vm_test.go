@@ -35,6 +35,18 @@ func TestBooleanExpression(t *testing.T) {
 	testCases := []vmTestCase{
 		{"true;", true},
 		{"false;", false},
+		{"5 > 3;", true},
+		{"5 < 3;", false},
+		{"3 > 5;", false},
+		{"3 < 5;", true},
+		{"3 == 3;", true},
+		{"3 != 3;", false},
+		{"3 == 5;", false},
+		{"3 != 5;", true},
+		{"true == true;", true},
+		{"true != true;", false},
+		{"true == false;", false},
+		{"true != false;", true},
 	}
 
 	runVmTests(t, testCases)
@@ -44,20 +56,22 @@ func runVmTests(t *testing.T, testCases []vmTestCase) {
 	t.Helper()
 
 	for _, tc := range testCases {
-		c := compiler.New()
-		program := parse(tc.input)
+		t.Run(tc.input, func(t *testing.T) {
+			c := compiler.New()
+			program := parse(tc.input)
 
-		if err := c.Compile(program); err != nil {
-			t.Fatalf("compiler error: %v", err)
-		}
+			if err := c.Compile(program); err != nil {
+				t.Fatalf("compiler error: %v", err)
+			}
 
-		vm := New(c.ByteCode())
-		if err := vm.Run(); err != nil {
-			t.Fatalf("vm error: %v", err)
-		}
+			vm := New(c.ByteCode())
+			if err := vm.Run(); err != nil {
+				t.Fatalf("vm error: %v", err)
+			}
 
-		elem := vm.LastPopped()
-		testObject(t, tc.expected, elem)
+			elem := vm.LastPopped()
+			testObject(t, tc.expected, elem)
+		})
 	}
 }
 

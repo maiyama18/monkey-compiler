@@ -16,6 +16,9 @@ func TestMake(t *testing.T) {
 		{
 			"opconstant", OpConstant, []int{65534}, []byte{byte(OpConstant), 255, 254},
 		},
+		{
+			"oppop", OpPop, []int{}, []byte{byte(OpPop)},
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {

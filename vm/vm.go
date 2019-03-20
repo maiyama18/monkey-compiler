@@ -61,7 +61,10 @@ func (vm *VM) Run() error {
 			if err := vm.executeBinaryOperation(opcode); err != nil {
 				return err
 			}
-
+		case code.OpEqual, code.OpNotEqual, code.OpGreaterThan:
+			if err := vm.executeComparison(opcode); err != nil {
+				return err
+			}
 		case code.OpPop:
 			vm.pop()
 		}
@@ -124,6 +127,45 @@ func (vm *VM) executeBinaryIntegerOperation(opcode code.Opcode, left, right obje
 	}
 
 	return vm.push(&object.Integer{Value: result})
+}
+
+func (vm *VM) executeComparison(opcode code.Opcode) error {
+	right := vm.pop()
+	left := vm.pop()
+
+	rightType := right.Type()
+	leftType := left.Type()
+
+	if rightType == object.INTEGER_OBJ && leftType == object.INTEGER_OBJ {
+		return vm.executeIntegerComparison(opcode, left, right)
+	}
+
+	switch opcode {
+	case code.OpEqual:
+		return vm.push(&object.Boolean{Value: left == right})
+	case code.OpNotEqual:
+		return vm.push(&object.Boolean{Value: left != right})
+	}
+	return fmt.Errorf("unsupported types for binary operation: %s and %s", leftType, rightType)
+}
+
+func (vm *VM) executeIntegerComparison(opcode code.Opcode, left, right object.Object) error {
+	leftValue := left.(*object.Integer).Value
+	rightValue := right.(*object.Integer).Value
+
+	var result bool
+	switch opcode {
+	case code.OpEqual:
+		result = leftValue == rightValue
+	case code.OpNotEqual:
+		result = leftValue != rightValue
+	case code.OpGreaterThan:
+		result = leftValue > rightValue
+	default:
+		return fmt.Errorf("unknown integer operator: %d", opcode)
+	}
+
+	return vm.push(&object.Boolean{Value: result})
 }
 
 func (vm *VM) LastPopped() object.Object {

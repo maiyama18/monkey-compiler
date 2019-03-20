@@ -66,6 +66,50 @@ func TestBooleanExpression(t *testing.T) {
 				code.Make(code.OpPop),
 			},
 		},
+		{
+			desc:              "5>3",
+			input:             "5 > 3;",
+			expectedConstants: []interface{}{5, 3},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpGreaterThan),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			desc:              "5<3",
+			input:             "5 < 3;",
+			expectedConstants: []interface{}{3, 5},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpGreaterThan),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			desc:              "5==3",
+			input:             "5 == 3;",
+			expectedConstants: []interface{}{5, 3},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpEqual),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			desc:              "5!=3",
+			input:             "5 != 3;",
+			expectedConstants: []interface{}{5, 3},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpNotEqual),
+				code.Make(code.OpPop),
+			},
+		},
 	}
 
 	runCompilerTests(t, testCases)
