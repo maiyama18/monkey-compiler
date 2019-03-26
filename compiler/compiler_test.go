@@ -138,7 +138,7 @@ func TestBooleanExpression(t *testing.T) {
 func TestConditional(t *testing.T) {
 	testCases := []compilerTestCase{
 		{
-			desc:              "if-statement",
+			desc:              "if-statement-with-true-condition",
 			input:             "if (true) { 10 }; 33;",
 			expectedConstants: []interface{}{10, 33},
 			expectedInstructions: []code.Instructions{
@@ -147,6 +147,21 @@ func TestConditional(t *testing.T) {
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpPop),
 				code.Make(code.OpConstant, 1),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			desc:              "if-else-statement-with-true-condition",
+			input:             "if (true) { 10 } else { 20 }; 33;",
+			expectedConstants: []interface{}{10, 20, 33},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpTrue),
+				code.Make(code.OpJumpNotTruthy, 7),
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpJump, 13),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpPop),
+				code.Make(code.OpConstant, 2),
 				code.Make(code.OpPop),
 			},
 		},
