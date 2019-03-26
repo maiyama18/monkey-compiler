@@ -135,6 +135,25 @@ func TestBooleanExpression(t *testing.T) {
 	runCompilerTests(t, testCases)
 }
 
+func TestConditional(t *testing.T) {
+	testCases := []compilerTestCase{
+		{
+			desc:              "if-statement",
+			input:             "if (true) { 10 }; 33;",
+			expectedConstants: []interface{}{10, 33},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpTrue),
+				code.Make(code.OpJumpNotTruthy, 7),
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpPop),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+
+	runCompilerTests(t, testCases)
+}
 func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 	t.Helper()
 
