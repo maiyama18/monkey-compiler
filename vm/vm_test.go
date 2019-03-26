@@ -26,6 +26,8 @@ func TestIntegerArithmetic(t *testing.T) {
 		{"4 / 2 * 2 + 10 - 5", 9},
 		{"2 * (2 + 3)", 10},
 		{"2 * 2 + 3", 7},
+		{"-1", -1},
+		{"-10 + 30 + -10", 10},
 	}
 
 	runVmTests(t, testCases)
@@ -47,6 +49,9 @@ func TestBooleanExpression(t *testing.T) {
 		{"true != true;", false},
 		{"true == false;", false},
 		{"true != false;", true},
+		{"!true;", false},
+		{"!false;", true},
+		{"!!true;", true},
 	}
 
 	runVmTests(t, testCases)
