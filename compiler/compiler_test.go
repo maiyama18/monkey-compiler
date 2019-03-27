@@ -156,7 +156,7 @@ func TestConditional(t *testing.T) {
 			expectedConstants: []interface{}{10, 20, 33},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpTrue),
-				code.Make(code.OpJumpNotTruthy, 7),
+				code.Make(code.OpJumpNotTruthy, 10),
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpJump, 13),
 				code.Make(code.OpConstant, 1),
