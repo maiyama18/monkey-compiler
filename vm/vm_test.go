@@ -51,6 +51,7 @@ func TestBooleanExpression(t *testing.T) {
 		{"!true;", false},
 		{"!false;", true},
 		{"!!true;", true},
+		{"!(if (false) { 10; })", true},
 	}
 
 	runVmTests(t, testCases)
@@ -67,6 +68,8 @@ func TestConditionals(t *testing.T) {
 		{"if (1 > 2) { 10 } else { 20 }", 20},
 		{"if (1 > 2) { 10 }", Null},
 		{"if (false) { 10 }", Null},
+		{"if (false) { 10 }", Null},
+		{"if (if (false) { 5 }) { 10 } else { 20 }", 20},
 	}
 
 	runVmTests(t, testCases)
