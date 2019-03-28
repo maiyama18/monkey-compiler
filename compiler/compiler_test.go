@@ -141,12 +141,14 @@ func TestConditional(t *testing.T) {
 			input:             "if (true) { 10 }; 33;",
 			expectedConstants: []interface{}{10, 33},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpTrue),
-				code.Make(code.OpJumpNotTruthy, 7),
-				code.Make(code.OpConstant, 0),
-				code.Make(code.OpPop),
-				code.Make(code.OpConstant, 1),
-				code.Make(code.OpPop),
+				code.Make(code.OpTrue),              // 00
+				code.Make(code.OpJumpNotTruthy, 10), // 01
+				code.Make(code.OpConstant, 0),       // 04
+				code.Make(code.OpJump, 11),          // 07
+				code.Make(code.OpNull),              // 10
+				code.Make(code.OpPop),               // 11
+				code.Make(code.OpConstant, 1),       // 12
+				code.Make(code.OpPop),               // 15
 			},
 		},
 		{
@@ -184,11 +186,11 @@ func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 
 		expectedInstructions := concatInstructions(tc.expectedInstructions)
 		if len(byteCode.Instructions) != len(expectedInstructions) {
-			t.Errorf("instruction wrong. want=%s, got=%s", expectedInstructions, byteCode.Instructions)
+			t.Errorf("instruction wrong.\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
 		}
 		for i, b := range byteCode.Instructions {
 			if b != expectedInstructions[i] {
-				t.Errorf("instruction wrong. want=%s, got=%s", expectedInstructions, byteCode.Instructions)
+				t.Errorf("instruction wrong\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
 				break
 			}
 		}
