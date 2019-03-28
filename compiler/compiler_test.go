@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"github.com/stretchr/testify/assert"
 	"monkey-compiler/ast"
 	"monkey-compiler/code"
 	"monkey-compiler/lexer"
@@ -177,14 +176,26 @@ func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 
 		compiler := New()
 		err := compiler.Compile(program)
-		assert.Nil(t, err, "compile should return no error")
+		if err != nil {
+			t.Errorf("compile error: %s", err.Error())
+		}
 
 		byteCode := compiler.ByteCode()
 
 		expectedInstructions := concatInstructions(tc.expectedInstructions)
-		assert.Equal(t, expectedInstructions, byteCode.Instructions)
+		if len(byteCode.Instructions) != len(expectedInstructions) {
+			t.Errorf("instruction wrong. want=%s, got=%s", expectedInstructions, byteCode.Instructions)
+		}
+		for i, b := range byteCode.Instructions {
+			if b != expectedInstructions[i] {
+				t.Errorf("instruction wrong. want=%s, got=%s", expectedInstructions, byteCode.Instructions)
+				break
+			}
+		}
 
-		assert.Equal(t, len(tc.expectedConstants), len(byteCode.Constants), "the length of constants should be same")
+		if len(byteCode.Constants) != len(tc.expectedConstants) {
+			t.Errorf("constants wrong. want=%+v, got=%+v", tc.expectedConstants, byteCode.Constants)
+		}
 		for i, c := range tc.expectedConstants {
 			switch c := c.(type) {
 			case int:
@@ -212,7 +223,11 @@ func testIntegerObject(t *testing.T, expected int64, actual object.Object) {
 	t.Helper()
 
 	actualInteger, ok := actual.(*object.Integer)
-	assert.True(t, ok, "should be converted to Integer")
+	if !ok {
+		t.Errorf("could not convert to Integer: %+v", actual)
+	}
 
-	assert.Equal(t, expected, actualInteger.Value, "should be equal")
+	if actualInteger.Value != expected {
+		t.Errorf("integer valud wrong. want=%d, got=%d", expected, actualInteger.Value)
+	}
 }
