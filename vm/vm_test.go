@@ -84,12 +84,12 @@ func runVmTests(t *testing.T, testCases []vmTestCase) {
 			program := parse(tc.input)
 
 			if err := c.Compile(program); err != nil {
-				t.Errorf("compiler error: %s", err)
+				t.Fatalf("compiler error: %s", err)
 			}
 
 			vm := New(c.ByteCode())
 			if err := vm.Run(); err != nil {
-				t.Errorf("vm error: %s", err)
+				t.Fatalf("vm error: %s", err)
 			}
 
 			elem := vm.LastPopped()
@@ -114,7 +114,7 @@ func testObject(t *testing.T, expected interface{}, actual object.Object) {
 		testBooleanObject(t, expected, actual)
 	case *object.Null:
 		if actual != Null {
-			t.Errorf("not null. got=%+v", actual)
+			t.Fatalf("not null. got=%+v", actual)
 		}
 	}
 }
@@ -124,11 +124,11 @@ func testIntegerObject(t *testing.T, expected int64, actual object.Object) {
 
 	actualInteger, ok := actual.(*object.Integer)
 	if !ok {
-		t.Errorf("could not convert to Integer: %+v", actual)
+		t.Fatalf("could not convert to Integer: %+v", actual)
 	}
 
 	if actualInteger.Value != expected {
-		t.Errorf("Integer valud wrong. want=%d, got=%d", expected, actualInteger.Value)
+		t.Fatalf("Integer valud wrong. want=%d, got=%d", expected, actualInteger.Value)
 	}
 }
 
@@ -137,10 +137,10 @@ func testBooleanObject(t *testing.T, expected bool, actual object.Object) {
 
 	actualBoolean, ok := actual.(*object.Boolean)
 	if !ok {
-		t.Errorf("could not convert to Boolean: %+v", actual)
+		t.Fatalf("could not convert to Boolean: %+v", actual)
 	}
 
 	if actualBoolean.Value != expected {
-		t.Errorf("Boolean valud wrong. want=%t, got=%t", expected, actualBoolean.Value)
+		t.Fatalf("Boolean valud wrong. want=%t, got=%t", expected, actualBoolean.Value)
 	}
 }

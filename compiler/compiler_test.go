@@ -170,40 +170,95 @@ func TestConditional(t *testing.T) {
 
 	runCompilerTests(t, testCases)
 }
+
+func TestGlobalLetStatement(t *testing.T) {
+	testCases := []compilerTestCase{
+		{
+			desc: "assignments",
+			input: `
+			let one = 1;
+			let two = 2;
+			`,
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpSetGlobal, 1),
+			},
+		},
+		{
+			desc: "assignment-and-retrieval",
+			input: `
+			let one = 1;
+			one;
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			desc: "assignment-assignment-and-retrieval",
+			input: `
+			let one = 1;
+			let two = one;
+			two;
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpSetGlobal, 1),
+				code.Make(code.OpGetGlobal, 1),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+
+	runCompilerTests(t, testCases)
+}
+
 func runCompilerTests(t *testing.T, testCases []compilerTestCase) {
 	t.Helper()
 
 	for _, tc := range testCases {
-		program := parse(tc.input)
+		t.Run(tc.desc, func(t *testing.T) {
+			program := parse(tc.input)
 
-		compiler := New()
-		err := compiler.Compile(program)
-		if err != nil {
-			t.Errorf("compile error: %s", err.Error())
-		}
-
-		byteCode := compiler.ByteCode()
-
-		expectedInstructions := concatInstructions(tc.expectedInstructions)
-		if len(byteCode.Instructions) != len(expectedInstructions) {
-			t.Errorf("instruction wrong.\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
-		}
-		for i, b := range byteCode.Instructions {
-			if b != expectedInstructions[i] {
-				t.Errorf("instruction wrong\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
-				break
+			compiler := New()
+			err := compiler.Compile(program)
+			if err != nil {
+				t.Fatalf("compile error: %s", err.Error())
 			}
-		}
 
-		if len(byteCode.Constants) != len(tc.expectedConstants) {
-			t.Errorf("constants wrong. want=%+v, got=%+v", tc.expectedConstants, byteCode.Constants)
-		}
-		for i, c := range tc.expectedConstants {
-			switch c := c.(type) {
-			case int:
-				testIntegerObject(t, int64(c), byteCode.Constants[i])
+			byteCode := compiler.ByteCode()
+
+			expectedInstructions := concatInstructions(tc.expectedInstructions)
+			if len(byteCode.Instructions) != len(expectedInstructions) {
+				t.Fatalf("instruction wrong.\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
 			}
-		}
+			for i, b := range byteCode.Instructions {
+				if b != expectedInstructions[i] {
+					t.Fatalf("instruction wrong\nwant=%s\ngot=%s", expectedInstructions, byteCode.Instructions)
+					break
+				}
+			}
+
+			if len(byteCode.Constants) != len(tc.expectedConstants) {
+				t.Fatalf("constants wrong. want=%+v, got=%+v", tc.expectedConstants, byteCode.Constants)
+			}
+			for i, c := range tc.expectedConstants {
+				switch c := c.(type) {
+				case int:
+					testIntegerObject(t, int64(c), byteCode.Constants[i])
+				}
+			}
+		})
 	}
 }
 
@@ -226,10 +281,10 @@ func testIntegerObject(t *testing.T, expected int64, actual object.Object) {
 
 	actualInteger, ok := actual.(*object.Integer)
 	if !ok {
-		t.Errorf("could not convert to Integer: %+v", actual)
+		t.Fatalf("could not convert to Integer: %+v", actual)
 	}
 
 	if actualInteger.Value != expected {
-		t.Errorf("integer valud wrong. want=%d, got=%d", expected, actualInteger.Value)
+		t.Fatalf("integer valud wrong. want=%d, got=%d", expected, actualInteger.Value)
 	}
 }
