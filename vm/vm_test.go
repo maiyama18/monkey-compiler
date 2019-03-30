@@ -75,6 +75,16 @@ func TestConditionals(t *testing.T) {
 	runVmTests(t, testCases)
 }
 
+func TestGlobalLetStatements(t *testing.T) {
+	testCases := []vmTestCase{
+		{"let one = 1; one", 1},
+		{"let one = 1; let two = 2; one + two", 3},
+		{"let one = 1; let two = one + one; one + two", 3},
+	}
+
+	runVmTests(t, testCases)
+}
+
 func runVmTests(t *testing.T, testCases []vmTestCase) {
 	t.Helper()
 

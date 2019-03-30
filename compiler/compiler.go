@@ -41,6 +41,15 @@ func New() *Compiler {
 	}
 }
 
+// NewWithState returns compiler made from existing symbol table and constants
+func NewWithState(s *SymbolTable, constants []object.Object) *Compiler {
+	c := New()
+	c.symbolTable = s
+	c.constants = constants
+
+	return c
+}
+
 // Compile ...
 func (c *Compiler) Compile(node ast.Node) error {
 	switch node := node.(type) {

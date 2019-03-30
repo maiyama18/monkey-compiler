@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"monkey-compiler/compiler"
+	"monkey-compiler/object"
 	"monkey-compiler/vm"
 
 	"monkey-compiler/lexer"
@@ -16,6 +17,10 @@ const prompt = ">> "
 // Start starts REPL of monkey
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+
+	constants := make([]object.Object, 0)
+	symbolTable := compiler.NewSymbolTable()
+	globals := make([]object.Object, vm.GlobalsSize)
 
 	for {
 		fmt.Printf(prompt)
@@ -34,12 +39,12 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		comp := compiler.New()
+		comp := compiler.NewWithState(symbolTable, constants)
 		if err := comp.Compile(program); err != nil {
 			io.WriteString(out, fmt.Sprintf("error during compilation: %v", err))
 		}
 
-		machine := vm.New(comp.ByteCode())
+		machine := vm.NewWithGlobals(comp.ByteCode(), globals)
 		if err := machine.Run(); err != nil {
 			io.WriteString(out, fmt.Sprintf("error during execution: %v", err))
 		}
